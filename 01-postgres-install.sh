@@ -17,7 +17,8 @@
 ##fixed parameters
 DB_USER="odoo"
 DB_PASS="odoo"
-
+#PostgreSQL Version
+OE_POSTGRESQL_VERSION="10"
 #
 # Install dialog
 #
