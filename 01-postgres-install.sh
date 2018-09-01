@@ -18,18 +18,38 @@
 DB_USER="odoo"
 DB_PASS="odoo"
 
+#
+# Install dialog
+#
+echo -e "\n---- Update Server ----"
+apt-get update >> ./install_log
+echo -e "\n---- Install dialog ----"
+apt-get install dialog -y >> ./install_log
+#
+# Remove Odoo and PostgreSQL
+#
 #--------------------------------------------------
 # Update Server
 #--------------------------------------------------
-echo -e "\n---- Update Server ----"
-sudo apt update
-sudo apt upgrade -yV
+echo -e "\n---- Upgrade Server ----"
+apt-get upgrade -y >> ./install_log
 
 #--------------------------------------------------
 # Install PostgreSQL Server
 #--------------------------------------------------
-echo -e "\n---- Install PostgreSQL Server ----"
-sudo apt install postgresql postgresql-server-dev-all -yV
+# Add official repository
+cat <<EOF > /etc/apt/sources.list.d/pgdg.list
+deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main
+EOF
+
+echo -e "\n---- Install PostgreSQL Repo Key ----"
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+
+
+echo -e "\n---- Install PostgreSQL Server ${OE_POSTGRESQL_VERSION} ----"
+apt-get update >> ./install_log
+apt-get install postgresql-${OE_POSTGRESQL_VERSION} postgresql-server-dev-${OE_POSTGRESQL_VERSION}   -y >> ./install_log
+
 
 echo -e "\n---- Creating the Odoo PostgreSQL User  ----"
 sudo su - postgres -c "createuser -s $DB_USER" 2> /dev/null || true
